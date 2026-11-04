@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SpaCare – Demo: Booking and conflict check</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f1ea;--card:#fffdf9;--ink:#23312f;--mute:#6b7a77;--line:#ded6c9;--teal:#1f7a74;--teal-d:#15544f;--sand:#e9dfd0;--ok:#2e7d4f;--warn:#b7791f;--bad:#b3392f;--c1:#d6ece8;--c2:#f7e6c4;--c3:#cfe3f5;--c4:#d9ead3}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141b1a;--card:#1c2625;--ink:#e8efed;--mute:#97a8a4;--line:#2f3d3b;--teal:#4fb6ae;--teal-d:#7fd0c9;--sand:#26332f;--c1:#21423f;--c2:#4a3d1f;--c3:#233a52;--c4:#2b4226}}
+:root[data-theme="dark"]{--bg:#141b1a;--card:#1c2625;--ink:#e8efed;--mute:#97a8a4;--line:#2f3d3b;--teal:#4fb6ae;--teal-d:#7fd0c9;--sand:#26332f;--c1:#21423f;--c2:#4a3d1f;--c3:#233a52;--c4:#2b4226}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Segoe UI",system-ui,sans-serif}
+h1,h2,h3{font-family:Georgia,"Iowan Old Style",serif;font-weight:600;margin:0 0 .5rem}
+button,select,input{font:inherit;color:inherit}
+.btn{background:var(--teal);color:#fff;border:0;padding:.5rem 1rem;border-radius:8px;cursor:pointer}.btn:hover{background:var(--teal-d)}
+.btn.ghost{background:transparent;color:var(--teal);border:1px solid var(--teal)}.btn.bad{background:var(--bad)}
+input,select{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:.45rem .6rem;max-width:100%}
+.login{max-width:360px;margin:12vh auto;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:2rem}
+.login label{display:block;margin:.8rem 0 .2rem;color:var(--mute)}.login input{width:100%}.login .btn{width:100%;margin-top:1.2rem}
+header{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;padding:.7rem 1rem;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+header b{font-family:Georgia,serif;font-size:1.2rem;color:var(--teal);margin-right:1rem}
+nav{display:flex;gap:.25rem;flex-wrap:wrap;flex:1}nav button{background:none;border:0;padding:.4rem .8rem;border-radius:8px;cursor:pointer;color:var(--mute)}nav button.on{background:var(--sand);color:var(--ink)}
+main{max-width:1100px;margin:0 auto;padding:1rem}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1rem;margin-bottom:1rem}
+.cal{overflow-x:auto}.grid{display:grid;grid-template-columns:56px repeat(3,minmax(150px,1fr));min-width:600px;border-top:1px solid var(--line)}
+.grid>div{border-bottom:1px solid var(--line);border-left:1px solid var(--line);min-height:30px;font-size:12px;position:relative}.grid .t{color:var(--mute);padding:4px;border-left:0}.grid .h{font-weight:600;padding:6px;background:var(--sand);font-size:13px}
+.off{background:repeating-linear-gradient(45deg,transparent 0 6px,var(--sand) 6px 8px)}
+.blk{position:absolute;left:3px;right:3px;top:2px;border-radius:6px;padding:3px 6px;cursor:pointer;overflow:hidden;border-left:4px solid var(--teal);z-index:2}
+.s-CONFIRMED{background:var(--c1)}.s-CHECKED_IN{background:var(--c3)}.s-IN_PROGRESS{background:var(--c2)}.s-COMPLETED{background:var(--c4)}.s-CANCELLED{background:var(--sand);opacity:.6;text-decoration:line-through}
+.tag{display:inline-block;padding:1px 8px;border-radius:99px;font-size:12px;background:var(--sand)}
+.row{display:flex;gap:1rem;flex-wrap:wrap}.row>*{flex:1 1 280px}
+.slots{display:flex;flex-wrap:wrap;gap:6px;margin:.5rem 0}.slot{padding:.3rem .6rem;border:1px solid var(--teal);border-radius:8px;background:none;cursor:pointer;color:var(--teal)}.slot.busy{border-color:var(--line);color:var(--mute);text-decoration:line-through}.slot.sel{background:var(--teal);color:#fff}
+table{width:100%;border-collapse:collapse}td,th{padding:.4rem .5rem;border-bottom:1px solid var(--line);text-align:left}
+.bar{height:8px;background:var(--sand);border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:var(--teal)}
+.toast{position:fixed;left:50%;bottom:calc(1.2rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:.7rem 1.1rem;border-radius:10px;max-width:90vw;z-index:20}.toast.bad{background:var(--bad);color:#fff}
+.chk{display:flex;gap:.5rem;align-items:center;padding:.15rem 0}.big{font-size:1.5rem;font-family:Georgia,serif}
+@media(max-width:600px){main{padding:.6rem}}
+</style></head><body>
+<div id="app"></div>
+<!-- Demo 2 UI -->
+<script>
+const CFG={"role": "Receptionist", "login": false, "start": "bk", "tabs": ["bk", "cal"], "ap": [{"id": 1, "c": 3, "s": 3, "sv": [4], "st": 540, "d": 45, "status": "CONFIRMED"}, {"id": 2, "c": 1, "s": 2, "sv": [5], "st": 600, "d": 60, "status": "CONFIRMED"}], "allow": {"status": false, "cancel": false, "resched": false, "pay": false}};
+const SV={1:{n:'Body massage 90m',p:500000,d:90},2:{n:'Relaxing hair wash 60m',p:150000,d:60},3:{n:'Basic facial 60m',p:400000,d:60},4:{n:'Women’s haircut 45m',p:200000,d:45},5:{n:'Gel polish 60m',p:250000,d:60}};
+const ST={1:{n:'Lan (Spa)',sk:[1,2,3],from:480,to:1200},2:{n:'Hà (Nail/Skin)',sk:[3,5],from:480,to:1200},3:{n:'Minh (Stylist)',sk:[2,4],from:480,to:840}};
+const TIER={SILVER:{min:0,m:1,disc:0},GOLD:{min:1e7,m:1.2,disc:5},PLATINUM:{min:3e7,m:1.5,disc:10}};
+const ORDER=['SILVER','GOLD','PLATINUM'];
+let CU={1:{n:'Nguyễn Thu H.',ph:'0903 000 123',tier:'GOLD',pts:420,sp:18e6,h:[]},2:{n:'Trần Mai',ph:'0912 000 456',tier:'SILVER',pts:80,sp:9.5e6,h:[]},3:{n:'Lê Linh',ph:'0987 000 789',tier:'PLATINUM',pts:900,sp:35e6,h:[]}};
+let AP=JSON.parse(JSON.stringify(CFG.ap)),nid=CFG.ap.length+1,inv=[],view=CFG.start,role=CFG.role,sel=null,form={c:1,sv:[1],s:1,st:null};
+const $=q=>document.querySelector(q),money=n=>Math.round(n).toLocaleString('en-US')+' đ',hm=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+function toast(t,bad){const e=document.createElement('div');e.className='toast'+(bad?' bad':'');e.textContent=t;document.body.append(e);setTimeout(()=>e.remove(),3200)}
+const busy=(s,st,d,ex)=>AP.some(a=>a.s==s&&a.id!=ex&&a.status!='CANCELLED'&&a.st<st+d&&a.st+a.d>st);
+const dur=l=>l.reduce((x,i)=>x+SV[i].d,0),sub=l=>l.reduce((x,i)=>x+SV[i].p,0);
+function login(){const u=$('#u').value.trim(),p=$('#p').value;const R={letan01:'Receptionist',ql_hoa:'Manager',ktv_lan:'Technician',admin:'Manager'};if(R[u]&&p==='123456'){role=R[u];view='cal';draw()}else toast('Wrong username or password. Try letan01 / 123456.',1)}
+function book(){const l=form.sv,s=form.s;if(!l.length)return toast('Choose at least one service.',1);if(l.some(i=>!ST[s].sk.includes(i)))return toast('This staff member is not skilled in all selected services.',1);
+ if(form.st==null)return toast('Choose a time slot.',1);const D=dur(l);if(form.st<ST[s].from||form.st+D>ST[s].to)return toast('Outside the staff shift.',1);
+ if(busy(s,form.st,D))return toast('Conflict: '+ST[s].n+' is already booked at '+hm(form.st)+'. Pick another slot.',1);
+ AP.push({id:nid,c:form.c,s,sv:[...l],st:form.st,d:D,status:'CONFIRMED'});toast('Appointment #'+nid+' confirmed. Reminder scheduled.');nid++;form.st=null;view='cal';draw()}
+function adv(id){const a=AP.find(x=>x.id==id),n={CONFIRMED:'CHECKED_IN',CHECKED_IN:'IN_PROGRESS',IN_PROGRESS:'COMPLETED'}[a.status];if(n){a.status=n;toast('Status: '+n);draw()}}
+function cancel(id){const a=AP.find(x=>x.id==id);a.status='CANCELLED';sel=null;toast('Appointment cancelled, slot released.');draw()}
+function pay(id){const a=AP.find(x=>x.id==id),c=CU[a.c],T=TIER[c.tier],S=sub(a.sv),td=S*T.disc/100,af=S-td;let r=Math.min(+$('#rp').value||0,c.pts);
+ const pd=Math.floor(r/100)*1e4;if(pd>af/2)return toast('Points can cover at most 50% of the invoice.',1);const tot=af-pd,earn=Math.floor(tot/1e4*T.m);
+ c.pts+=earn-r;c.sp+=tot;const old=c.tier;ORDER.forEach(k=>{if(c.sp>=TIER[k].min&&ORDER.indexOf(k)>ORDER.indexOf(c.tier))c.tier=k});
+ inv.push({a:a.id,c:a.c,tot,sv:a.sv});c.h.unshift(hm(a.st)+' '+a.sv.map(i=>SV[i].n).join(', ')+' – '+money(tot)+' (+'+earn+' pts)');a.paid=1;sel=null;view='cu';draw();
+ toast(c.tier!=old?'Paid '+money(tot)+'. Upgraded to '+c.tier+'!':'Paid '+money(tot)+'. +'+earn+' points.')}
+function reschedUI(a){let o='';for(let m=ST[a.s].from;m+a.d<=ST[a.s].to;m+=30)o+='<option value="'+m+'"'+(m==a.st?' selected':'')+'>'+hm(m)+(busy(a.s,m,a.d,a.id)?' (busy)':'')+'</option>';return '<p style="margin-top:1rem"><b>Reschedule</b> to <select id="rs">'+o+'</select> <button class="btn ghost" onclick="rs('+a.id+')">Reschedule</button></p>'}
+function rs(id){const a=AP.find(x=>x.id==id),m=+$('#rs').value;if(m==a.st)return toast('Choose a different time.',1);if(busy(a.s,m,a.d,a.id))return toast('Conflict: '+ST[a.s].n+' is already booked at '+hm(m)+'. Pick another slot.',1);a.st=m;toast('Appointment #'+id+' moved to '+hm(m)+'. Old slot released.');draw()}
+const go=v=>{view=v;sel=null;draw()};
+function cal(){let g='<div class="h t">Time</div>'+Object.values(ST).map(s=>'<div class="h">'+s.n+'</div>').join('');
+ for(let m=480;m<1200;m+=30){g+='<div class="t">'+hm(m)+'</div>';for(const k in ST){const s=ST[k],o=m<s.from||m>=s.to,a=AP.find(x=>x.s==k&&x.st==m&&x.status!='CANCELLED');
+  g+='<div class="'+(o?'off':'')+'">'+(a?'<div class="blk s-'+a.status+'" style="height:'+(a.d/30*30-4)+'px" onclick="sel='+a.id+';draw()"><b>'+CU[a.c].n+'</b><br>'+a.sv.map(i=>SV[i].n.split(' ')[0]).join(', ')+'</div>':'')+'</div>'}}
+ return '<div class="card cal"><h2>Appointments – tomorrow</h2><div class="grid">'+g+'</div><p style="color:var(--mute);margin:.6rem 0 0">Hatched cells are outside a staff member’s shift. Click an appointment to manage it.</p></div>'+(sel?detail():'')}
+function detail(){const a=AP.find(x=>x.id==sel),c=CU[a.c],T=TIER[c.tier],S=sub(a.sv),td=S*T.disc/100,nx={CONFIRMED:'Check in',CHECKED_IN:'Start service',IN_PROGRESS:'Complete service'}[a.status];
+ let h='<div class="card"><h3>Appointment #'+a.id+' <span class="tag">'+a.status+'</span></h3><p>'+c.n+' ('+c.tier+') · '+ST[a.s].n+' · '+hm(a.st)+'–'+hm(a.st+a.d)+'<br>'+a.sv.map(i=>SV[i].n).join(' + ')+'</p>';
+ if(nx&&CFG.allow.status)h+='<button class="btn" onclick="adv('+a.id+')">'+nx+'</button> ';
+ if(a.status=='CONFIRMED'&&CFG.allow.cancel)h+='<button class="btn bad" onclick="cancel('+a.id+')">Cancel appointment</button>';
+ if(a.status=='CONFIRMED'&&CFG.allow.resched)h+=reschedUI(a);
+ if(a.status=='COMPLETED'&&!a.paid&&CFG.allow.pay){if(role==='Technician')h+='<p>Technicians cannot take payment.</p>';else h+='<h3 style="margin-top:1rem">Payment</h3><table><tr><td>Subtotal</td><td>'+money(S)+'</td></tr><tr><td>'+c.tier+' tier discount '+T.disc+'%</td><td>−'+money(td)+'</td></tr><tr><td>Redeem points (100 pts = 10,000 đ, you have '+c.pts+')</td><td><input id="rp" type="number" min="0" step="100" value="0" style="width:100px"></td></tr></table><p><select id="pm"><option>Cash</option><option>Card</option><option>Transfer</option><option>QR</option></select> <button class="btn" onclick="pay('+a.id+')">Pay and print invoice</button></p>'}
+ return h+'</div>'}
+function bk(){const s=ST[form.s],D=dur(form.sv)||30;let sl='';for(let m=s.from;m+D<=s.to;m+=30)sl+='<button class="slot'+(busy(form.s,m,D)?' busy':'')+(form.st===m?' sel':'')+'" onclick="form.st='+m+';draw()">'+hm(m)+'</button>';
+ return '<div class="card"><h2>Book appointment</h2><div class="row"><div><label>Customer</label><br><select onchange="form.c=+this.value;draw()">'+Object.entries(CU).map(([k,c])=>'<option value="'+k+'"'+(form.c==k?' selected':'')+'>'+c.n+' – '+c.tier+'</option>').join('')+'</select><p><b>Services</b></p>'+Object.entries(SV).map(([k,v])=>'<label class="chk"><input type="checkbox" '+(form.sv.includes(+k)?'checked':'')+' onchange="tg('+k+')">'+v.n+' – '+money(v.p)+'</label>').join('')+'</div><div><label>Staff</label><br><select onchange="form.s=+this.value;form.st=null;draw()">'+Object.entries(ST).map(([k,v])=>'<option value="'+k+'"'+(form.s==k?' selected':'')+'>'+v.n+'</option>').join('')+'</select><p><b>Time slots</b> (total '+D+' min, crossed-out = busy)</p><div class="slots">'+sl+'</div><button class="btn" onclick="book()">Confirm booking</button></div></div></div>'}
+function tg(k){const i=form.sv.indexOf(k);i<0?form.sv.push(k):form.sv.splice(i,1);form.st=null;draw()}
+function cus(){return '<div class="row">'+Object.values(CU).map(c=>{const i=ORDER.indexOf(c.tier),nx=ORDER[i+1],pr=nx?Math.min(100,c.sp/TIER[nx].min*100):100;return '<div class="card"><h3>'+c.n+'</h3><span class="tag">'+c.tier+'</span> <span class="tag">'+c.pts+' points</span><p style="color:var(--mute)">'+c.ph+' · spent '+money(c.sp)+' in 12 months</p><div class="bar"><i style="width:'+pr+'%"></i></div><small>'+(nx?money(TIER[nx].min-c.sp)+' to '+nx:'Top tier')+'</small><p>'+(c.h.length?c.h.join('<br>'):'<span style="color:var(--mute)">No visits recorded in this demo yet.</span>')+'</p></div>'}).join('')+'</div>'}
+function rep(){const t=inv.reduce((x,i)=>x+i.tot,0),cnt={};inv.forEach(i=>i.sv.forEach(s=>cnt[s]=(cnt[s]||0)+1));const mx=Math.max(1,...Object.values(cnt));
+ return '<div class="row"><div class="card"><div class="big">'+money(t)+'</div>Revenue today</div><div class="card"><div class="big">'+AP.length+'</div>Appointments</div><div class="card"><div class="big">'+AP.filter(a=>a.status=='COMPLETED').length+'</div>Completed</div><div class="card"><div class="big">'+AP.filter(a=>a.status=='CANCELLED').length+'</div>Cancelled</div></div><div class="card"><h3>Top services</h3>'+(Object.keys(cnt).length?Object.entries(cnt).map(([k,v])=>'<p>'+SV[k].n+'<div class="bar"><i style="width:'+v/mx*100+'%"></i></div></p>').join(''):'<p style="color:var(--mute)">Complete and pay an appointment to see data here.</p>')+'</div>'}
+function draw(){const A=$('#app');if(view=='login'){A.innerHTML='<div class="login"><h1>SpaCare</h1><p style="color:var(--mute)">Spa and salon management</p><label>Username</label><input id="u" value="letan01"><label>Password</label><input id="p" type="password" value="123456"><button class="btn" onclick="login()">Log in</button><p style="color:var(--mute);font-size:13px">Demo accounts: letan01, ql_hoa, ktv_lan (password 123456)</p></div>';return}
+ const T=[['cal','Appointments'],['bk','Book'],['cu','Customers & loyalty'],['rep','Reports']].filter(x=>CFG.tabs.includes(x[0]));
+ A.innerHTML='<header><b>SpaCare</b><span class="tag">'+CFG.title+'</span><nav>'+T.map(([k,n])=>'<button class="'+(view==k?'on':'')+'" onclick="go(\''+k+'\')">'+n+'</button>').join('')+'</nav><span class="tag">'+role+'</span></header><main>'+({cal,bk,cu:cus,rep}[view])()+'</main>'}
+draw();
+</script></body></html>

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # SpaCare – Final submission
 
 Course: Requirements Analysis and Design · Ton Duc Thang University
@@ -15,3 +16,6 @@ Authors: Ly Phuc Hai (524H0013), Le Hoai An (524H0077) · Advisor: Dr. Ho Thi Li
 
 Assignment checklist: report (Word/PDF) ✔ · slides ✔ · Java source (03_Demo/*/Java) ✔ · UI prototype file (03_Demo/*/UI/index.html) ✔ · demo script with sample data ✔ · deadline 22:00, 18/11/2026 via the e-learning system.
 Before submitting: update the table of contents in Word (accept the field update), fill the repository/Figma links in report section 7.6, adjust Appendix A, and run all five Java demos once.
+=======
+# Spa_Care
+>>>>>>> 365268cce65135a26d00fdc2658609ce9c33efa5

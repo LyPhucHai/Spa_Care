@@ -1,0 +1,10 @@
+INSERT INTO membership_tier VALUES (1,'SILVER',0,1.00,0),(2,'GOLD',10000000,1.20,5),(3,'PLATINUM',30000000,1.50,10);
+INSERT INTO customer(id,tier_id,full_name,phone,point_balance,spending_12m,is_new) VALUES (1,2,'Nguyễn Thu H','0903000123',420,18000000,FALSE),(2,1,'Trần Mai','0912000456',80,9500000,FALSE),(3,3,'Lê Linh','0987000789',900,35000000,FALSE);
+INSERT INTO staff VALUES (1,'Lan'),(2,'Hà'),(3,'Minh');
+INSERT INTO service(id,name,price,duration_min,is_active,trial_percent) VALUES (1,'Massage body 90p',500000,90,TRUE,0),(2,'Gội đầu thư giãn 60p',150000,60,TRUE,50),(3,'Chăm sóc da cơ bản 60p',400000,60,TRUE,70),(4,'Cắt tóc nữ 45p',200000,45,TRUE,0),(5,'Sơn gel 60p',250000,60,TRUE,60);
+INSERT INTO staff_service VALUES (1,1),(1,2),(1,3),(2,3),(2,5),(3,2),(3,4);
+INSERT INTO room VALUES (1,'Phòng 1'),(2,'Phòng 2'),(3,'Khu nail'),(4,'Khu tóc');
+INSERT INTO shift VALUES (1,'Sáng','08:00:00','14:00:00'),(2,'Chiều','14:00:00','20:00:00'),(3,'Cả ngày','08:00:00','20:00:00');
+INSERT INTO combo(id,name,discount_percent,is_active) VALUES (1,'Combo Thư giãn toàn thân',40,TRUE),(2,'Combo Da và Móng',30,TRUE);
+INSERT INTO combo_item(combo_id,service_id) VALUES (1,1),(1,2),(1,3),(2,3),(2,5);
+INSERT INTO service_package(id,name,service_id,total_sessions,price,valid_days) VALUES (1,'Liệu trình trị mụn 5 buổi',3,5,1200000,90),(2,'Thẻ Massage 10 buổi',1,10,2500000,180),(3,'Liệu trình sơn gel 5 buổi',5,5,750000,60);

@@ -10,6 +10,10 @@ public class StatusService {
 
     /** UC-06: CONFIRMED -> CHECKED_IN -> IN_PROGRESS -> COMPLETED. */
     public void advance(int id, String from, String to) throws SQLException {
+        if (!("CONFIRMED".equals(from) && "CHECKED_IN".equals(to)
+                || "CHECKED_IN".equals(from) && "IN_PROGRESS".equals(to)
+                || "IN_PROGRESS".equals(from) && "COMPLETED".equals(to)))
+            throw new IllegalStateException("Chuyển trạng thái không hợp lệ");
         try (PreparedStatement p = c().prepareStatement("UPDATE appointment SET status=? WHERE id=? AND status=?")) {
             p.setString(1, to); p.setInt(2, id); p.setString(3, from);
             if (p.executeUpdate() == 0) throw new IllegalStateException("Lịch #" + id + " không ở trạng thái " + from);

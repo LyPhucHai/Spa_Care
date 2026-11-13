@@ -28,6 +28,7 @@ public class RescheduleService extends BookingService {
 
     /** UC-05: dời lịch. */
     public void reschedule(int id, LocalDateTime newStart, boolean override) throws SQLException {
+        Auth.require("ADMIN", "MANAGER", "RECEPTIONIST");
         Appt a = load(id); checkPolicy(a, override);
         int minutes = (int) Duration.between(a.start(), a.end()).toMinutes();
         if (!findSlots(a.staffId(), newStart.toLocalDate(), minutes, id).contains(newStart)) throw new IllegalStateException("Khung giờ mới xung đột hoặc ngoài ca làm");
@@ -52,6 +53,8 @@ public class RescheduleService extends BookingService {
 
     /** UC-05: hủy lịch. */
     public void cancel(int id, String reason, boolean override) throws SQLException {
+        Auth.require("ADMIN", "MANAGER", "RECEPTIONIST");
+        if (reason == null || reason.isBlank() || reason.trim().length() > 200) throw new IllegalStateException("Lý do hủy phải từ 1 đến 200 ký tự");
         checkPolicy(load(id), override);
         try (PreparedStatement p = c().prepareStatement("UPDATE appointment SET status='CANCELLED', cancel_reason=? WHERE id=?")) { p.setString(1, reason); p.setInt(2, id); p.executeUpdate(); }
     }

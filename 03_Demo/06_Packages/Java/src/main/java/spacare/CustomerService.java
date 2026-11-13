@@ -8,6 +8,7 @@ public class CustomerService {
     private Connection c() { return Db.get(); }
 
     public List<String> list() throws SQLException {
+        Auth.require("ADMIN", "MANAGER", "RECEPTIONIST");
         List<String> out = new ArrayList<>();
         String sql = "SELECT cu.id, cu.full_name, cu.phone, t.name, cu.point_balance, cu.spending_12m, cu.is_new FROM customer cu JOIN membership_tier t ON t.id=cu.tier_id ORDER BY cu.id";
         try (Statement s = c().createStatement(); ResultSet r = s.executeQuery(sql)) {
@@ -19,8 +20,10 @@ public class CustomerService {
 
     /** Thêm khách mới, hạng SILVER, 0 điểm. Trả về mã khách. */
     public int add(String fullName, String phone) throws SQLException {
+        Auth.require("ADMIN", "MANAGER", "RECEPTIONIST");
+        if (fullName == null || phone == null) throw new IllegalStateException("Thiếu họ tên hoặc số điện thoại");
         String name = fullName.trim(), ph = phone.trim();
-        if (name.isEmpty()) throw new IllegalStateException("Họ tên không được để trống");
+        if (name.isEmpty() || name.length() > 100) throw new IllegalStateException("Họ tên phải từ 1 đến 100 ký tự");
         if (!ph.matches("0\\d{9}")) throw new IllegalStateException("Số điện thoại phải gồm 10 số và bắt đầu bằng 0");
         try (PreparedStatement p = c().prepareStatement("SELECT 1 FROM customer WHERE phone=?")) {
             p.setString(1, ph);

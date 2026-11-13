@@ -1,4 +1,4 @@
-CREATE TABLE user_account(id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) NOT NULL UNIQUE, password_hash VARCHAR(64) NOT NULL, role VARCHAR(20) NOT NULL, failed_attempts INT DEFAULT 0);
+CREATE TABLE user_account(id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50) NOT NULL UNIQUE, password_hash VARCHAR(255) NOT NULL, role VARCHAR(20) NOT NULL, failed_attempts INT DEFAULT 0, locked_until TIMESTAMP, is_active BOOLEAN DEFAULT TRUE NOT NULL);
 CREATE TABLE membership_tier(id INT PRIMARY KEY, name VARCHAR(20) NOT NULL UNIQUE, min_spending BIGINT NOT NULL, point_multiplier DECIMAL(3,2) NOT NULL, discount_percent INT NOT NULL);
 CREATE TABLE customer(id INT PRIMARY KEY, tier_id INT NOT NULL, full_name VARCHAR(100) NOT NULL, phone VARCHAR(15) NOT NULL UNIQUE, point_balance INT DEFAULT 0 CHECK (point_balance >= 0), spending_12m BIGINT DEFAULT 0, is_new BOOLEAN DEFAULT TRUE NOT NULL, FOREIGN KEY (tier_id) REFERENCES membership_tier(id));
 CREATE TABLE staff(id INT PRIMARY KEY, full_name VARCHAR(100) NOT NULL);

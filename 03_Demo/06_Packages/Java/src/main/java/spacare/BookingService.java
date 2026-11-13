@@ -13,6 +13,8 @@ public class BookingService {
     Connection c() { return Db.get(); }
 
     public int totalMinutes(List<Integer> serviceIds) throws SQLException {
+        if (serviceIds == null || serviceIds.isEmpty()) throw new IllegalStateException("Chưa chọn dịch vụ nào");
+        if (new HashSet<>(serviceIds).size() != serviceIds.size()) throw new IllegalStateException("Dịch vụ bị chọn trùng");
         int sum = 0;
         for (int id : serviceIds) try (PreparedStatement p = c().prepareStatement("SELECT duration_min FROM service WHERE id=? AND is_active=TRUE")) {
             p.setInt(1, id);
@@ -42,6 +44,8 @@ public class BookingService {
     }
 
     public List<LocalDateTime> findSlots(int staffId, LocalDate date, int minutes, int excludeAppt) throws SQLException {
+        Auth.requireLogin();
+        if (date == null || minutes <= 0) throw new IllegalStateException("Ngày và thời lượng không hợp lệ");
         List<LocalDateTime> out = new ArrayList<>();
         List<LocalTime[]> shifts = new ArrayList<>();
         try (PreparedStatement p = c().prepareStatement("SELECT sh.start_time, sh.end_time FROM work_schedule w JOIN shift sh ON sh.id=w.shift_id WHERE w.staff_id=? AND w.work_date=?")) {
@@ -97,6 +101,8 @@ public class BookingService {
      */
     public int create(int customerId, List<Integer> serviceIds, int staffId, LocalDateTime start,
                       int guests, Integer comboId, Integer cpId) throws SQLException {
+        Auth.require("ADMIN", "MANAGER", "RECEPTIONIST");
+        if (start == null) throw new IllegalStateException("Chưa chọn giờ hẹn");
         if (guests < 1 || guests > 10) throw new IllegalStateException("Số khách phải từ 1 đến 10");
         if (comboId != null && cpId != null) throw new IllegalStateException("Không dùng chung combo và buổi liệu trình trong một lịch hẹn");
         if (cpId != null && guests != 1) throw new IllegalStateException("Buổi liệu trình chỉ dùng cho 1 khách");
@@ -149,6 +155,7 @@ public class BookingService {
     }
 
     public List<String> list() throws SQLException {
+        Auth.require("ADMIN", "MANAGER", "RECEPTIONIST");
         List<String> out = new ArrayList<>();
         String sql = "SELECT a.id, a.start_time, a.end_time, a.status, cu.full_name, st.full_name, sv.name, a.guest_count, cb.name, s.customer_package_id "
                 + "FROM appointment a JOIN customer cu ON cu.id=a.customer_id "

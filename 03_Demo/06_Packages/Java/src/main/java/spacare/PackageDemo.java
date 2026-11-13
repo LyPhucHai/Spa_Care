@@ -9,6 +9,7 @@ public class PackageDemo {
 
     public static void main(String[] x) throws Exception {
         init("DEMO 6 - GÓI DỊCH VỤ + TÍCH ĐIỂM (COMBO, LIỆU TRÌNH, ĐÔI/NHÓM, LẦN ĐẦU)");
+        Auth.login("admin", "123456");
         BookingService bk = new BookingService(); StatusService st = new StatusService(); BillingService bill = new BillingService();
         PackageService pk = new PackageService(); CustomerService cs = new CustomerService();
 

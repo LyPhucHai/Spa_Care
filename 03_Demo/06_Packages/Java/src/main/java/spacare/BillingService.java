@@ -25,6 +25,8 @@ public class BillingService {
 
     /** UC-07: thanh toán lịch đã hoàn thành. */
     public String pay(int apptId, int redeemPoints, String method) throws SQLException {
+        Auth.require("ADMIN", "MANAGER", "RECEPTIONIST");
+        if (!Set.of("CASH", "CARD", "TRANSFER", "QR").contains(method == null ? "" : method)) throw new IllegalStateException("Hình thức thanh toán không hợp lệ");
         Connection c = Db.get(); c.setAutoCommit(false);
         try {
             int custId, guests, comboId; String status;
@@ -80,6 +82,8 @@ public class BillingService {
 
     /** UC-12: bán gói liệu trình cho khách. Giá gói đã là giá ưu đãi nên không giảm thêm, nhưng vẫn tích điểm. */
     public String sellPackage(int custId, int packageId, String method) throws SQLException {
+        Auth.require("ADMIN", "MANAGER", "RECEPTIONIST");
+        if (!Set.of("CASH", "CARD", "TRANSFER", "QR").contains(method == null ? "" : method)) throw new IllegalStateException("Hình thức thanh toán không hợp lệ");
         Connection c = Db.get(); c.setAutoCommit(false);
         try {
             Cust cu = loadCust(c, custId);

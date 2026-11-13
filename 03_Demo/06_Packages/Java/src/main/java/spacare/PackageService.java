@@ -24,6 +24,7 @@ public class PackageService {
     }
 
     public List<String> combos() throws SQLException {
+        Auth.requireLogin();
         List<int[]> head = new ArrayList<>(); List<String> names = new ArrayList<>();
         try (Statement s = c().createStatement(); ResultSet r = s.executeQuery("SELECT id, name, discount_percent FROM combo WHERE is_active=TRUE ORDER BY id")) {
             while (r.next()) { head.add(new int[]{r.getInt(1), r.getInt(3)}); names.add(r.getString(2)); }
@@ -42,6 +43,7 @@ public class PackageService {
     }
 
     public List<String> packages() throws SQLException {
+        Auth.requireLogin();
         List<String> out = new ArrayList<>();
         String sql = "SELECT p.id, p.name, sv.name, p.total_sessions, p.price, sv.price, p.valid_days FROM service_package p JOIN service sv ON sv.id=p.service_id ORDER BY p.id";
         try (Statement s = c().createStatement(); ResultSet r = s.executeQuery(sql)) {
@@ -56,6 +58,7 @@ public class PackageService {
 
     /** Dịch vụ có ưu đãi trải nghiệm cho khách mới. */
     public List<String> trials() throws SQLException {
+        Auth.requireLogin();
         List<String> out = new ArrayList<>();
         try (Statement s = c().createStatement(); ResultSet r = s.executeQuery("SELECT name, trial_percent FROM service WHERE trial_percent > 0 AND is_active=TRUE ORDER BY id")) {
             while (r.next()) out.add(String.format("Trải nghiệm lần đầu: %s giảm %d%% (chỉ khách mới)", r.getString(1), r.getInt(2)));
@@ -64,6 +67,7 @@ public class PackageService {
     }
 
     public List<String> customerPackages(int customerId) throws SQLException {
+        Auth.require("ADMIN", "MANAGER", "RECEPTIONIST");
         List<Object[]> rows = new ArrayList<>();
         String sql = "SELECT cp.id, p.name, cp.remaining_sessions, p.total_sessions, cp.expires_at FROM customer_package cp JOIN service_package p ON p.id=cp.package_id WHERE cp.customer_id=? ORDER BY cp.id";
         try (PreparedStatement p = c().prepareStatement(sql)) {

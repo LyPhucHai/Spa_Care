@@ -1,46 +1,33 @@
-# Hướng dẫn demo console tổng hợp
+# Demo 06 Console tổng hợp
 
-## Chạy chương trình
+Đặt lịch, combo, liệu trình, thanh toán và thành viên trong một menu Java. Xem [cách chạy](Java/README.md).
 
-Từ thư mục gốc repo, chạy `sh run.sh` để dùng H2 lưu file. Lần sau mở lại vẫn còn khách, lịch, hóa đơn và trạng thái khóa tài khoản. `sh run.sh menu` tạo dữ liệu trong RAM. Không mở đồng thời hai console dùng chung file H2.
+## Luồng chính
 
-Đăng nhập `letan01` / `123456`. Xem menu 16 để biết mã dịch vụ; 1 để xem khách; nhân viên mẫu: 1 Lan (massage/gội/da), 2 Hà (da/nail), 3 Minh (gội/cắt).
+1. Đăng nhập `letan01` / `123456`.
+2. Menu **6**: đặt Massage, Mai, Lan, ngày mai 10:00; ghi mã lịch.
+3. Thử đặt trùng Lan → bị từ chối.
+4. Menu **8**: dời sang giờ trống hoặc hủy.
+5. Menu **9**: check-in → bắt đầu → hoàn thành.
+6. Menu **10**: thu tiền, 0 điểm, CASH.
+7. Menu **15**: xem lịch sử dịch vụ và điểm.
+8. `ql_hoa` dùng menu **20** để xem doanh thu.
 
-## Kịch bản nghiệp vụ chính
+## Các menu khác
 
-1. Menu 6, loại 1, khách 2 (Mai), dịch vụ 1, nhân viên 1, Enter để chọn ngày mai, giờ `10:00`. Ghi lại mã lịch A.
-2. Menu 6, cùng giờ/nhân viên, khách 1, dịch vụ 2. Bị từ chối do trùng lịch.
-3. Menu 8, loại 1, lịch A, `N` khi hỏi ghi đè; chọn ngày mai `14:00`. Giờ cũ được nhả ra. Menu 7 để kiểm tra.
-4. Menu 9, lịch A, bước 1 để check-in. Menu 99 đăng xuất.
-5. Đăng nhập `ktv_lan`. Menu 7 thấy lịch Lan; menu 9, lịch A, bước 2 rồi bước 3. Menu này không cho Lan check-in hoặc cập nhật lịch của Hà/Minh.
-6. Đăng nhập lại `letan01`; menu 10, lịch A, Enter để đổi 0 điểm, Enter để CASH. Hóa đơn 500.000 đ, Mai có 130 điểm, nâng Gold khi đạt 10 triệu chi tiêu mẫu. Thanh toán lần hai bị từ chối.
-7. Menu 15, khách 2: kiểm tra lịch sử dịch vụ và tích điểm.
-8. Đăng nhập `ql_hoa`; menu 20, nhập khoảng ngày gồm hôm nay: báo cáo tính theo ngày xuất hóa đơn, không phải ngày hẹn.
-9. Thoát bằng 0, mở lại `sh run.sh`, tìm khách/lịch để xác nhận lưu file.
+| Menu | Chức năng |
+|---|---|
+| 1–2 | Xem/thêm khách |
+| 3–4 | Ưu đãi và gói đã mua |
+| 5–8 | Tìm giờ, đặt, xem, dời/hủy lịch |
+| 9–11 | Thực hiện, thanh toán, bán gói |
+| 12 | Admin đặt lại dữ liệu, cần gõ DONGY |
+| 13–16 | Tìm/sửa khách, lịch sử, dịch vụ |
+| 17–20 | Sửa dịch vụ, nhân viên/ca, phân ca, doanh thu |
+| 99 / 0 | Đăng xuất / thoát |
 
-Các kết quả số trên giả định DB mẫu mới, chưa chạy thanh toán khác. Muốn khôi phục dữ liệu mẫu: đăng nhập admin, menu 12 và gõ `DONGY`; thao tác này xóa toàn bộ dữ liệu của DB đang mở.
+## Giới hạn
 
-## Chức năng bổ sung
+Console và web dùng DB riêng. Đặt nhóm ở console chỉ mô phỏng giá, không cấp tài nguyên riêng từng người. Chi tiêu `spending_12m` ở console là số mẫu cộng dồn; kho, nhắc lịch và một số màn hình chỉ có trong bản web.
 
-- 2: Thêm khách, kiểm tra điện thoại trùng.
-- 3–4: Xem combo, gói bán, gói đã mua và số buổi giữ chỗ.
-- 6: Đặt combo hoặc dùng buổi liệu trình đúng chủ sở hữu, đúng dịch vụ, còn hạn/còn buổi.
-- 11: Mua gói; thanh toán buổi trả trước không thu lại tiền gói.
-- 13–15: Tìm khách theo tên/điện thoại, cập nhật hồ sơ, xem lịch sử.
-- 17: Quản lý cập nhật/ngừng bán dịch vụ; giá tại thời điểm đặt của lịch cũ giữ nguyên.
-- 18–19: Xem nhân viên/chuyên môn/ca, thêm ca không giao với ca cũ. Không hỗ trợ xóa/thay ca đã phân. Lan/Hà mặc định cả ngày, Minh buổi sáng trong 14 ngày mẫu; có thể thêm ca chiều cho Minh.
-- 20: Báo cáo doanh thu đã thanh toán theo khoảng ngày, gồm bán gói.
-
-## Giới hạn cần trình bày đúng
-
-- Đây là ứng dụng Java console một người dùng. Năm UI HTML cũ độc lập, chưa gọi Java. Chưa có web backend hay giao diện đồ họa nối trực tiếp tới console.
-- Luồng đặt đôi/nhóm chỉ mô phỏng giá; giữ một nhân viên và một phòng như code gốc, chưa cấp tài nguyên cho từng người.
-- Chống trùng lịch đã kiểm tra trên các thao tác tuần tự. Chưa triển khai phục vụ nhiều người đặt đồng thời hoặc các khóa dành cho môi trường web.
-- `spending_12m` là số dư chi tiêu mẫu cộng hóa đơn mới; chưa tự tính cửa sổ trượt 12 tháng. Điểm chưa tự hết hạn, chưa có hoàn tiền.
-- Chưa tích hợp gửi nhắc lịch, cổng thanh toán, in PDF hóa đơn, chấm công/hoa hồng, tồn kho, đánh giá hay quản lý tài khoản qua menu.
-- Thêm/sửa toàn bộ nhân viên, thêm dịch vụ mới, sửa cấu hình combo/gói/hạng chưa có menu; dữ liệu mẫu và SQL là nguồn cấu hình hiện tại.
-- Bộ 01–05 được giữ cho thuyết trình cũ. Tính năng bảo mật mới nằm ở bộ 06; không tuyên bố toàn bộ 5 demo cũ đã dùng PBKDF2 và khóa 15 phút.
-
-## Kiểm thử
-
-Từ gốc repo chạy `sh run.sh test`: 36 phép kiểm tra tính giá + 59 phép kiểm tra nghiệp vụ. Bộ test dùng DB riêng trong RAM, không xóa DB saved. Ngoài bộ test đã kiểm tra lưu khách và khóa tài khoản qua các tiến trình Java độc lập, và build/chạy lại cả 5 demo gốc bằng source.
+Menu 12 xóa dữ liệu của DB đang mở. Chạy chế độ RAM nếu chỉ muốn thử nhanh.

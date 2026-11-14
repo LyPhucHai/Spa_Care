@@ -1,0 +1,11 @@
+{
+  "name": "spacare-ui-checks",
+  "private": true,
+  "description": "Optional UI test tools; Java app runs without Node.js",
+  "scripts": {
+    "test:e2e": "node tests/browser.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

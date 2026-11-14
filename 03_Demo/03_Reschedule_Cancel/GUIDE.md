@@ -1,16 +1,26 @@
-# Demo 3 – Reschedule and cancel (UC-05)
+# Demo 03 Dời và hủy lịch
 
-**What it proves:** rescheduling respects conflicts, an appointment never blocks itself, cancelling frees the slot, and only CONFIRMED appointments can be changed.
-**Time:** about 2 minutes.
+UC-05 · khoảng 2 phút.
 
-## Part 1 – UI (`UI/index.html`)
-The grid shows #1 Mai/Massage/Lan 10:00, #2 Thu H./Wash/Lan 14:00, #3 Linh/Haircut/Minh 09:00 (already CHECKED_IN).
-1. Click Mai's appointment → panel with **Reschedule** and **Cancel appointment**.
-2. Choose **14:00 (busy)** and click Reschedule → red toast "Conflict: Lan is already booked at 14:00".
-3. Choose **16:00** → "moved to 16:00. Old slot released", grid updates.
-4. Click Thu H.'s appointment → **Cancel appointment** → shows cancelled, slot freed.
-5. Click Linh's appointment (CHECKED_IN) → no Reschedule/Cancel buttons: the status rule.
+## Chạy
 
-## Part 2 – Java (`Java/`)
-Command: `./run.sh` (class `RescheduleDemo`). Expected: #1 and #2 created; move #1 to 14:00 → **[BỊ TỪ CHỐI]**; move #1 to 16:00 → ok; to 15:30 → ok; cancel #2 → ok; cancel #2 again → **[BỊ TỪ CHỐI]**; check-in #3 then cancel → **[BỊ TỪ CHỐI]**; final list: #1 at 15:30, #2 CANCELLED, #3 CHECKED_IN.
-Say: "The 2-hour notice rule is the constant MIN_NOTICE_HOURS; reception and managers can override it."
+Mở [UI/index.html](UI/index.html) để thử giao diện. Java cần JDK 17+ và Maven; vào thư mục `Java`:
+
+**Windows:** `run.bat`.
+
+**macOS / Linux:** `sh run.sh`.
+
+UI và Java là hai demo độc lập, dữ liệu trong RAM.
+
+## Kịch bản
+
+| Thao tác | Kết quả |
+|---|---|
+| Dời lịch Mai vào 14:00 đang bận | Từ chối |
+| Dời sang 16:00 | Thành công, nhả giờ cũ |
+| Hủy lịch Thu H. | CANCELLED, nhả giờ |
+| Hủy lại hoặc hủy lịch đã check-in | Từ chối |
+
+Java chạy `RescheduleDemo`. Kết quả cuối của kịch bản Java: lịch 1 lúc 15:30, lịch 2 CANCELLED, lịch 3 CHECKED_IN.
+
+Luật báo trước 2 giờ nằm ở `MIN_NOTICE_HOURS`; demo cho phép truyền cờ ghi đè. Không coi đó là bằng chứng toàn bộ phân quyền đã được tích hợp.

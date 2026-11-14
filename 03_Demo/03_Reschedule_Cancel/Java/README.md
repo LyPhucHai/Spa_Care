@@ -1,4 +1,11 @@
-# 03_Reschedule_Cancel – Java demo
+# Dời và hủy lịch — Java
 
-Requirements: JDK 17+ and Maven. Run `./run.sh` (Windows: `run.bat`). The class `RescheduleDemo` starts a fresh in-memory H2 database, so nothing needs installing.
-Lines marked [BỊ TỪ CHỐI] are intended: they show a business rule rejecting an invalid action.
+Demo độc lập. Cần **JDK 17+ và Maven**.
+
+**Windows:** `run.bat`.
+
+**macOS / Linux:** `sh run.sh`.
+
+Chạy lệnh tại thư mục `Java`. Main class: [`RescheduleDemo`](src/main/java/spacare/RescheduleDemo.java). H2 tạo dữ liệu mới trong RAM mỗi lần chạy.
+
+Xem [kịch bản](../GUIDE.md) và [UI](../UI/index.html). `[BỊ TỪ CHỐI]` là kết quả dự kiến của thao tác sai.

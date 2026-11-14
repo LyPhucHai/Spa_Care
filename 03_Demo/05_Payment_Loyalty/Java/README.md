@@ -1,4 +1,11 @@
-# 05_Payment_Loyalty – Java demo
+# Thanh toán và điểm — Java
 
-Requirements: JDK 17+ and Maven. Run `./run.sh` (Windows: `run.bat`). The class `PaymentDemo` starts a fresh in-memory H2 database, so nothing needs installing.
-Lines marked [BỊ TỪ CHỐI] are intended: they show a business rule rejecting an invalid action.
+Demo độc lập. Cần **JDK 17+ và Maven**.
+
+**Windows:** `run.bat`.
+
+**macOS / Linux:** `sh run.sh`.
+
+Chạy lệnh tại thư mục `Java`. Main class: [`PaymentDemo`](src/main/java/spacare/PaymentDemo.java). H2 tạo dữ liệu mới trong RAM mỗi lần chạy.
+
+Xem [kịch bản](../GUIDE.md) và [UI](../UI/index.html). `[BỊ TỪ CHỐI]` là kết quả dự kiến của thao tác sai.

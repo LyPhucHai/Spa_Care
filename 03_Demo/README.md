@@ -1,23 +1,26 @@
-# SpaCare – Demo package (demo only)
+# Demo độc lập
 
-Five functions, each in its own folder. Inside every folder the **UI** and the **Java** program are separate and independent, and a `GUIDE.md` lists the exact steps and expected results.
+Các demo trước bản web. Mỗi bộ có UI HTML và chương trình Java riêng, không chia sẻ dữ liệu với web trong `app/`.
 
-| Folder | Function | Use cases | Time |
-|---|---|---|---|
-| 01_Login | Login, roles, lockout | UC-01 | 1.5 min |
-| 02_Booking_Conflict | Book appointment, conflict detection | UC-04, UC-17 | 3 min |
-| 03_Reschedule_Cancel | Reschedule and cancel | UC-05 | 2 min |
-| 04_CheckIn_Service | Check-in, start, complete service | UC-06 | 1.5 min |
-| 05_Payment_Loyalty | Payment, points, tier upgrade | UC-07, UC-08 | 3 min |
+| Demo | Nội dung | Hướng dẫn |
+|---|---|---|
+| 01 | Đăng nhập, vai trò, khóa tài khoản | [Mở](01_Login/GUIDE.md) |
+| 02 | Đặt lịch, kiểm tra xung đột | [Mở](02_Booking_Conflict/GUIDE.md) |
+| 03 | Dời và hủy lịch | [Mở](03_Reschedule_Cancel/GUIDE.md) |
+| 04 | Check-in, thực hiện dịch vụ | [Mở](04_CheckIn_Service/GUIDE.md) |
+| 05 | Thanh toán, điểm, nâng hạng | [Mở](05_Payment_Loyalty/GUIDE.md) |
+| 06 | Console tổng hợp, combo, liệu trình | [Mở](06_Packages/GUIDE.md) |
 
-```
-0X_Function/
-├── UI/index.html     open in any browser (clickable prototype of this function only)
-├── Java/             stand-alone Maven project (JDK 17+): ./run.sh or run.bat
-└── GUIDE.md          step-by-step demo script and expected results
-```
+## Chạy
 
-- **UI demos** need nothing installed; data resets when the page is reloaded.
-- **Java demos** each start a fresh in-memory H2 database and use tomorrow's date, so they run in any order and never depend on each other. Lines marked `[BỊ TỪ CHỐI]` are intended: they show a business rule refusing an invalid action.
-- On Windows use `run.bat` (it switches the console to UTF-8). The first Maven run needs internet to download H2; run each once before the presentation.
-- All five Java projects were compile-checked with JDK 21; the runtime output has not been captured yet, so take screenshots on your machine.
+Demo 01–05 cần **JDK 17+ và Maven**. Từ thư mục `Java` của demo:
+
+**Windows:** chạy `run.bat`.
+
+**macOS / Linux:** chạy `sh run.sh`.
+
+UI mở trực tiếp `UI/index.html`. Mỗi lần mở lại UI hoặc chạy Java, dữ liệu mẫu được tạo lại trong RAM. Maven cần Internet ở lần tải dependency đầu.
+
+Dòng `[BỊ TỪ CHỐI]` là kết quả mong đợi của tình huống sai. Demo 06 có chế độ lưu file riêng.
+
+Để chạy sản phẩm web tích hợp, xem [README chính](../README.md).

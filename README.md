@@ -1,27 +1,98 @@
-# SpaCare
+<h1 align="center">SpaCare</h1>
 
-Đồ án môn Requirements Analysis and Design: quản lý đặt lịch spa, thực hiện dịch vụ, thanh toán và khách hàng thân thiết bằng Java. Repo gồm báo cáo, slide, prototype HTML và Java console dùng H2..
+<p align="center">Quản lý lịch hẹn, dịch vụ và khách hàng spa.</p>
 
-| Tài khoản | Mật khẩu mẫu | Quyền |
-|---|---|---|
-| admin | 123456 | Quản trị, đặt lại dữ liệu mẫu |
-| ql_hoa | 123456 | Quản lý dịch vụ/ca làm/báo cáo, nghiệp vụ lễ tân |
-| letan01 | 123456 | Khách hàng, lịch hẹn, check-in, thanh toán, bán gói |
-| ktv_lan | 123456 | Xem lịch được giao, bắt đầu và hoàn thành dịch vụ |
+<p align="center">Java 17+ · H2 · Giao diện tiếng Việt</p>
 
-Mật khẩu console tổng hợp được băm PBKDF2 với salt ngẫu nhiên. Sau 5 lần sai, khóa 15 phút, trạng thái lưu vào DB. Khi có terminal tương tác hỗ trợ, mật khẩu không hiển thị lúc nhập; trong IDE không có console hệ thống sẽ dùng dòng nhập thông thường.
+<p align="center">
+  <a href="#cài-đặt">Cài đặt</a> ·
+  <a href="#tài-khoản-demo">Tài khoản</a> ·
+  <a href="SpaCare_Test_Checklist.md">Kiểm thử</a>
+</p>
 
-## Nội dung repo
+---
 
-| Thư mục | Nội dung |
+## Giới thiệu
+
+SpaCare kết nối đặt lịch, thực hiện dịch vụ, thanh toán, điểm thành viên và kho trong một ứng dụng web. Dữ liệu lưu trên máy; giao diện dùng trực tiếp API Java.
+
+## Chức năng
+
+- Đặt, dời, hủy lịch; kiểm tra nhân viên, phòng và ca làm.
+- Quản lý khách hàng, nhân viên, chi nhánh và dịch vụ.
+- Thanh toán, hóa đơn, combo, liệu trình và điểm thành viên.
+- Kho, chấm công, hoa hồng, đánh giá và báo cáo.
+
+## Cài đặt
+
+Cần **JDK 17 trở lên**. Không cần Maven, Node.js hoặc cài database riêng. Giải nén source và mở terminal trong thư mục `Spa_Care` có thư mục `app`.
+
+### Windows
+
+Cài JDK, thêm thư mục `bin` của JDK vào `PATH`, sau đó kiểm tra trong Command Prompt:
+
+```bat
+java -version
+javac -version
+start-web.bat
+```
+
+Có thể mở trực tiếp `start-web.bat` từ File Explorer.
+
+### macOS / Linux
+
+Cài JDK 17+, sau đó chạy:
+
+```bash
+java -version
+sh start-web.sh
+```
+
+Trên Arch Linux: `sudo pacman -S --needed jdk21-openjdk`.
+
+Mở **http://127.0.0.1:8080**. Nhấn `Ctrl+C` tại terminal để dừng server.
+
+## Tài khoản demo
+
+Mật khẩu chung: **123456**.
+
+| Tài khoản | Vai trò |
 |---|---|
-| `01_Report` | Báo cáo Word/PDF từ repo gốc, chưa chỉnh theo code mới |
-| `02_Slides` | Slide thuyết trình gốc |
-| `03_Demo/01_Login` đến `05_Payment_Loyalty` | Năm bộ UI HTML và Java demo độc lập |
-| `03_Demo/06_Packages` | Java console tổng hợp đã bổ sung đăng nhập, phân quyền, quản lý và kiểm thử |
-| `04_Database` | Schema/dữ liệu minh họa của bộ demo cũ; console 06 dùng resources riêng |
-| `05_Presentation_Script` | Kịch bản thuyết trình gốc |
-| `06_QA_Preparation` | Câu hỏi chuẩn bị gốc |
-| `07_Diagrams` | Use Case, ERD, Sequence, Activity |
+| `admin` | Quản trị |
+| `ql_hoa` | Quản lý |
+| `letan01` | Lễ tân |
+| `ktv_lan` | Kỹ thuật viên Lan |
+| `khach01` | Khách hàng |
 
-Đọc [hướng dẫn console tổng hợp](03_Demo/06_Packages/GUIDE.md) để demo theo vai trò, xem lệnh Windows và giới hạn thực tế. Prototype cũ mở trực tiếp `03_Demo/0X_*/UI/index.html` bằng trình duyệt; dữ liệu HTML và Java độc lập.
+Khách mới có thể đăng ký. Mật khẩu tài khoản mới cần ít nhất 8 ký tự.
+
+## Đổi cổng
+
+Nếu cổng 8080 đang được dùng:
+
+**Windows — Command Prompt**
+
+```bat
+set PORT=8081
+start-web.bat
+```
+
+**macOS / Linux**
+
+```bash
+PORT=8081 sh start-web.sh
+```
+
+Mở **http://127.0.0.1:8081**. Database được giữ lại khi khởi động lại.
+
+## Tài liệu
+
+| Nội dung | Tệp |
+|---|---|
+| Cấu hình, kiểm thử, sao lưu | [app/README.md](app/README.md) |
+| Chức năng và giới hạn | [app/FEATURES.md](app/FEATURES.md) |
+| Demo nhanh | [app/MANUAL_TESTS.md](app/MANUAL_TESTS.md) |
+| 117 test case | [SpaCare_Test_Checklist.md](SpaCare_Test_Checklist.md) |
+| Demo độc lập trước đây | [03_Demo/README.md](03_Demo/README.md) |
+
+SMS/Zalo/email và cổng ngân hàng đang mô phỏng. Bản in hóa đơn là chứng từ demo. Báo cáo và slide cũ chưa cập nhật theo bản web.

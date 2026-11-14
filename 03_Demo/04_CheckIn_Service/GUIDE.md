@@ -1,12 +1,22 @@
-# Demo 4 – Check-in and service (UC-06)
+# Demo 04 Thực hiện dịch vụ
 
-**What it proves:** an appointment follows a strict status machine CONFIRMED → CHECKED_IN → IN_PROGRESS → COMPLETED; steps cannot be skipped or repeated.
-**Time:** about 1.5 minutes.
+UC-06 · khoảng 1–2 phút.
 
-## Part 1 – UI (`UI/index.html`)
-1. Click Mai's appointment (CONFIRMED, teal).
-2. Click **Check in** → CHECKED_IN (blue). Click **Start service** → IN_PROGRESS (amber). Click **Complete service** → COMPLETED (green).
-3. Point out that each status has its own color and that the button label always shows the only valid next step.
+## Chạy
 
-## Part 2 – Java (`Java/`)
-Command: `./run.sh` (class `ServiceDemo`). Expected: appointment #1 created (CONFIRMED); jumping IN_PROGRESS → COMPLETED is **[BỊ TỪ CHỐI]**; then Check-in, Start and Complete each print the updated list; repeating check-in is **[BỊ TỪ CHỐI]**; final status COMPLETED.
+Mở [UI/index.html](UI/index.html) để thử giao diện. Java cần JDK 17+ và Maven; vào thư mục `Java`:
+
+**Windows:** `run.bat`.
+
+**macOS / Linux:** `sh run.sh`.
+
+UI và Java là hai demo độc lập, dữ liệu trong RAM.
+
+## Kịch bản
+
+1. Chọn lịch đã xác nhận.
+2. **Check in** → `CHECKED_IN`.
+3. **Start service** → `IN_PROGRESS`.
+4. **Complete service** → `COMPLETED`.
+
+Không được nhảy bước hoặc check-in lặp. Java chạy `ServiceDemo`, in kết quả từng bước và các trường hợp bị từ chối.

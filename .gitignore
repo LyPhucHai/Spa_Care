@@ -1,0 +1,9 @@
+﻿app/data/
+app/backups/
+app/target/
+app/certs/
+app/node_modules/
+03_Demo/**/out/
+03_Demo/**/data/
+03_Demo/**/target/
+03_Demo/_test_out/
